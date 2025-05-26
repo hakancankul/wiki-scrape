@@ -1,12 +1,60 @@
 # Wikipedia Daily Events Database
 
-This project scrapes daily events (births, deaths, events, and holidays) from Wikipedia and stores them in a PostgreSQL/Supabase database.
+This project scrapes daily events (births, deaths, events, and holidays) from Wikipedia and stores them in a Supabase database.
+
+## Database ER Diagram
+
+```mermaid
+erDiagram
+    gun {
+        int id PK
+        int gun
+        int ay
+    }
+    olay {
+        int id PK
+        int gun_id FK
+        int gun
+        int ay
+        int yil
+        text icerik
+    }
+    dogum {
+        int id PK
+        int gun_id FK
+        int gun
+        int ay
+        int yil
+        text icerik
+    }
+    olum {
+        int id PK
+        int gun_id FK
+        int gun
+        int ay
+        int yil
+        text icerik
+    }
+    tatil {
+        int id PK
+        int gun_id FK
+        int gun
+        int ay
+        text icerik
+    }
+
+    gun ||--o{ olay : "has"
+    gun ||--o{ dogum : "has"
+    gun ||--o{ olum : "has"
+    gun ||--o{ tatil : "has"
+
+```
 
 ## Features
 
 - Wikipedia data scraping (Turkish)
 - Year-based event tracking
-- PostgreSQL/Supabase database integration
+- Supabase database integration
 - Automatic backup system (JSON)
 - Error handling and logging
 - Optimized bulk data import
@@ -38,24 +86,21 @@ This project scrapes daily events (births, deaths, events, and holidays) from Wi
 
 ## Setup
 
-1. Install PostgreSQL and create a database:
-```sql
-CREATE DATABASE wikipedia_days;
-```
+1. Create a Supabase project and get your connection details.
 
 2. Install required Python packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Configure database connection:
+3. Configure Supabase connection:
    Create a `.env` file with the following variables:
    ```
-   DB_HOST=your_host
-   DB_PORT=your_port
-   DB_NAME=your_database
-   DB_USER=your_username
-   DB_PASSWORD=your_password
+   DB_HOST=your_supabase_host
+   DB_PORT=5432
+   DB_NAME=postgres
+   DB_USER=your_supabase_user
+   DB_PASSWORD=your_supabase_password
    ```
 
 ## Usage
@@ -70,7 +115,7 @@ python create_table.py
 python scrape.py
 ```
 
-3. Import data to PostgreSQL:
+3. Import data to Supabase:
 ```bash
 python bulk_data_import.py
 ```
@@ -90,20 +135,20 @@ python bulk_data_import.py
 - February is set to 29 days
 - Full Turkish character support
 - Data is scraped from Turkish Wikipedia
-- SSL connection required for Supabase
+- SSL connection is required for Supabase
 
 ## Project Structure
 
 - `scrape.py`: Wikipedia scraping script
 - `create_table.py`: Database table creation
-- `bulk_data_import.py`: Optimized data import to PostgreSQL/Supabase
+- `bulk_data_import.py`: Optimized data import to Supabase
 - `requirements.txt`: Required Python packages
 - Generated files:
   - `turkce_tum_gunler.json`: Scraped data backup
 
 ## Required Python Packages
 
-- `psycopg2-binary`: PostgreSQL database adapter
+- `psycopg2-binary`: PostgreSQL adapter for Supabase connection
 - `python-dotenv`: Environment variable management
 - `requests`: HTTP requests for scraping
 - `beautifulsoup4`: HTML parsing 

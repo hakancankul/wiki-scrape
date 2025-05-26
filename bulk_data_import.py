@@ -4,17 +4,18 @@ from psycopg2.extras import execute_values
 import os
 from dotenv import load_dotenv
 
-# .env dosyasından değişkenleri yükle
+# .env dosyasından Supabase bağlantı bilgilerini yükle
 load_dotenv()
 
 def veritabanina_baglan():
+    # Supabase bağlantısı için gerekli yapılandırma
     return psycopg2.connect(
         host=os.getenv('DB_HOST'),
         port=os.getenv('DB_PORT'),
         dbname=os.getenv('DB_NAME'),
         user=os.getenv('DB_USER'),
         password=os.getenv('DB_PASSWORD'),
-        sslmode='require'  # Supabase için SSL gerekli
+        sslmode='require'  # Supabase için SSL zorunlu
     )
 
 def gun_id_getir(cursor, gun, ay):
@@ -45,20 +46,21 @@ def verileri_toplu_ekle(cursor, tablo_adi, veriler):
     else:
         sutunlar = ['gun_id', 'gun', 'ay', 'yil', 'icerik']
     
-    # Insert sorgusunu oluştur
+    # Supabase için insert sorgusunu oluştur
     insert_query = f"INSERT INTO {tablo_adi} ({','.join(sutunlar)}) VALUES %s"
     
     try:
-        # Toplu insert işlemi
+        # Toplu insert işlemi - Supabase'e veri aktarımı
         execute_values(cursor, insert_query, veriler, page_size=1000)
-        print(f"{tablo_adi} tablosuna {len(veriler)} satır veri eklendi")
+        print(f"{tablo_adi} tablosuna {len(veriler)} satır veri Supabase'e eklendi")
     except psycopg2.Error as e:
-        print(f"Veri eklenirken hata oluştu: {e}")
+        print(f"Supabase'e veri eklenirken hata oluştu: {e}")
         raise
 
 def json_verileri_aktar():
     conn = None
     try:
+        # Supabase'e bağlan
         conn = veritabanina_baglan()
         cursor = conn.cursor()
 
@@ -95,7 +97,7 @@ def json_verileri_aktar():
             for tatil in gun_verisi['tatiller']:
                 tatil_verileri.append((gun_id, gun, ay, tatil))
 
-        # Verileri toplu şekilde ekle
+        # Verileri Supabase'e toplu şekilde ekle
         verileri_toplu_ekle(cursor, 'olay', olay_verileri)
         conn.commit()
         
@@ -108,7 +110,7 @@ def json_verileri_aktar():
         verileri_toplu_ekle(cursor, 'tatil', tatil_verileri)
         conn.commit()
 
-        print("Tüm veriler başarıyla PostgreSQL'e aktarıldı.")
+        print("Tüm veriler başarıyla Supabase'e aktarıldı.")
     
     except Exception as e:
         print(f"Bir hata oluştu: {e}")
