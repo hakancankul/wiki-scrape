@@ -1,2 +1,3 @@
 psycopg2==2.9.9
-Wikipedia-API==0.6.0 
+Wikipedia-API==0.6.0
+python-dotenv==1.0.1 
